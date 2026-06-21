@@ -1,0 +1,32 @@
+name: CI
+
+# Vérification de toute proposition de modification AVANT fusion dans main.
+# C'est ce job qui doit être exigé par la protection de branche (status check requis).
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Vérification (type-check + build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # type-check = juge de paix (vue-tsc --noEmit), cf. CLAUDE.md.
+      - run: npm run type-check
+
+      # Build Vite (sans `vue-tsc -b` qui a un échec TS préexistant sur PriceChart.vue)
+      # pour garantir que le bundle se génère réellement.
+      - run: npx vite build

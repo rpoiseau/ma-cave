@@ -164,6 +164,15 @@ All data is stored locally in **IndexedDB** (database name: `MaCaveDB`, table: `
 
 The app is a **Progressive Web App** via `vite-plugin-pwa` (configured in `vite.config.ts`, `registerType: 'autoUpdate'`). `buildBackup`/`registerSW` aside, the build emits a service worker that precaches the app shell (`globPatterns` covers js/css/html/svg/png/fonts) with `navigateFallback: 'index.html'` so the hash-router works offline. `src/main.ts` calls `registerSW({ immediate: true })`; types come from the `vite-plugin-pwa/client` reference in `src/vite-env.d.ts`. Manifest: name "Ma Cave", `theme_color #7B1FA2`, `display standalone`, icons in `public/` (`pwa-192x192.png`, `pwa-512x512.png`, `maskable-512x512.png`, `apple-touch-icon.png`, `wine-glass.svg` favicon). `index.html` carries the iOS metas (`apple-touch-icon`, `apple-mobile-web-app-*`, `theme-color`). `SettingsView` shows install instructions. **The SW only runs on a built `dist/` served over http(s)** (or `npm run preview`) — not in `npm run dev`.
 
+## CI/CD & gouvernance (GitHub Actions)
+
+Trois workflows dans `.github/workflows/` + protection de branche (cf. `CONTRIBUTING.md`).
+
+- **`ci.yml`** — sur `pull_request` vers `main` : `npm run type-check` puis `npx vite build`. Job nommé **`Vérification (type-check + build)`** ; c'est le status check à exiger dans la protection de branche.
+- **`deploy.yml`** — sur push `main` : build + déploiement GitHub Pages (inchangé).
+- **`release-please.yml`** — sur push `main` : `googleapis/release-please-action@v4` maintient une PR de release (bump version + `CHANGELOG.md` depuis les commits conventionnels) ; la fusionner crée le tag + la GitHub Release. Config : `release-please-config.json` (release-type `node`, pré-1.0 : breaking→mineur, feat→patch), version courante dans `.release-please-manifest.json`. **Pré-requis** : activer *« Allow GitHub Actions to create and approve pull requests »* (Settings → Actions → General).
+- **Policies** : `.github/CODEOWNERS` (`* @rpoiseau`) + protection de branche `main` (PR obligatoire, revue Code Owner, CI verte, pas de force-push). Réglages côté GitHub, détaillés dans `CONTRIBUTING.md`. Les titres de PR/commits doivent suivre les Conventional Commits pour alimenter release-please.
+
 ## Mobile / responsive layout
 
 `AppSidebar.vue` uses Vuetify `useDisplay()`: `permanent` rail on desktop, `temporary` overlay drawer on mobile (`mobile` breakpoint = smAndDown). The drawer state is shared via `src/presentation/composables/useLayout.ts` (a module-level `ref`), toggled by the hamburger in `AppNavbar.vue` (mobile only) and auto-closed on route change. `App.vue` uses `pa-4 pa-md-6`.

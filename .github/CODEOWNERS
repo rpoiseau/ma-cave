@@ -1,0 +1,4 @@
+# Toute modification du dépôt requiert la revue du propriétaire.
+# Couplé à une règle de protection de branche « Require review from Code Owners »,
+# cela empêche quiconque de modifier le comportement du site sans validation.
+* @rpoiseau
