@@ -1,0 +1,31 @@
+export enum SpiritCategory {
+  Whisky = 'whisky',
+  Rum = 'rum',
+  Gin = 'gin',
+  Vodka = 'vodka',
+  Cognac = 'cognac',
+  Armagnac = 'armagnac',
+  Calvados = 'calvados',
+  Tequila = 'tequila',
+  Mezcal = 'mezcal',
+  Bourbon = 'bourbon',
+  Brandy = 'brandy',
+  Liqueur = 'liqueur',
+  Other = 'other',
+}
+
+export const SPIRIT_CATEGORY_LABELS: Record<SpiritCategory, string> = {
+  [SpiritCategory.Whisky]: 'Whisky / Scotch',
+  [SpiritCategory.Rum]: 'Rhum',
+  [SpiritCategory.Gin]: 'Gin',
+  [SpiritCategory.Vodka]: 'Vodka',
+  [SpiritCategory.Cognac]: 'Cognac',
+  [SpiritCategory.Armagnac]: 'Armagnac',
+  [SpiritCategory.Calvados]: 'Calvados',
+  [SpiritCategory.Tequila]: 'Tequila',
+  [SpiritCategory.Mezcal]: 'Mezcal',
+  [SpiritCategory.Bourbon]: 'Bourbon',
+  [SpiritCategory.Brandy]: 'Brandy',
+  [SpiritCategory.Liqueur]: 'Liqueur',
+  [SpiritCategory.Other]: 'Autre',
+}

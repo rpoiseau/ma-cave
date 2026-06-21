@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(node *)",
+      "Bash(export NVM_DIR=*)",
+      "Bash(source *nvm.sh*)",
+      "Bash(curl *)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(mkdir *)",
+      "Bash(cat *)",
+      "Bash(ls *)",
+      "Edit(/Users/romainpoiseau/Documents/perso/ma-cave/*)",
+      "Write(/Users/romainpoiseau/Documents/perso/ma-cave/*)",
+      "Read(/Users/romainpoiseau/Documents/perso/ma-cave/*)",
+      "WebFetch"
+    ]
+  }
+}
