@@ -41,7 +41,7 @@ src/
 ├── domain/               # Pure business logic — no Vue, no Dexie, no external deps
 │   ├── entities/         # Bottle (base), Wine, Spirit; PricePoint & TastingNote on Bottle
 │   ├── value-objects/    # WineColor, SpiritCategory, DrinkingMoment enums;
-│   │                     #   appellations.ts (~270 profiles + enrichment merge);
+│   │                     #   appellations.ts (~490 profiles + enrichment merge);
 │   │                     #   grapeProfiles.ts (aromas/pairings per grape);
 │   │                     #   wineGuidance.ts (deriveWineGuidance — pure derivation)
 │   └── repositories/     # IBottleRepository, IWinePriceService (abstractions)
@@ -133,7 +133,9 @@ The pure helper `estimateMarketPrice(bottle, today?)` resolves a per-bottle cote
 
 ## Appellation database & auto-drinkability
 
-`src/domain/value-objects/appellations.ts` contains ~270 `AppellationProfile` entries (name, country, region, color, minYears, maxYears + optional grapes/style/aromas/foodPairings/servingTemp/investmentPotential/investmentNotes/`marketPriceEur`). The base array holds garde windows (with sourced comments); a separate `APPELLATION_ENRICHMENT` map (keyed by `id`) is `Object.assign`-merged into the profiles at module init — add curated data there, not inline in the 270 base lines. A second map, `APPELLATION_MARKET_PRICE` (keyed by `id`), holds indicative market price ranges (€/btl, Wine-Searcher/iDealwine medians) merged into `marketPriceEur` in the same loop; it feeds the local price estimation. Only iconic aroma/pairing overrides are curated (e.g. Sauternes→foie gras, Chablis→huîtres); generic aromas/pairings come from grape profiles. Investment ratings follow the recognized secondary market (Liv-ex, iDealwine, Wine-Searcher).
+`src/domain/value-objects/appellations.ts` contains ~490 `AppellationProfile` entries (name, country, region, color, minYears, maxYears + optional grapes/style/aromas/foodPairings/servingTemp/investmentPotential/investmentNotes/`marketPriceEur`). It covers ~100% of in-scope French AOC/AOP viticoles (audit vs INAO SIQO ref, cf. `docs/audit-appellations-inao.md`). The base array holds garde windows (with sourced comments); a separate `APPELLATION_ENRICHMENT` map (keyed by `id`) is `Object.assign`-merged into the profiles at module init — add curated data there, not inline in the base lines. A second map, `APPELLATION_MARKET_PRICE` (keyed by `id`), holds indicative market price ranges (€/btl, Wine-Searcher/iDealwine medians) merged into `marketPriceEur` in the same loop; it feeds the local price estimation. Only iconic aroma/pairing overrides are curated (e.g. Sauternes→foie gras, Chablis→huîtres); generic aromas/pairings come from grape profiles. Investment ratings follow the recognized secondary market (Liv-ex, iDealwine, Wine-Searcher).
+
+**Règle — une appellation multicolore = un profil par couleur.** Quand une AOC produit plusieurs couleurs (rouge/blanc/rosé/effervescent/liquoreux), on crée **un `AppellationProfile` distinct par couleur** plutôt qu'une entrée unique : la garde, les cépages et la température de service diffèrent par couleur, et `BottleForm.vue` matche par `name`. Convention : `id` suffixé (`<id>-rouge`/`-blanc`/`-rose`/`-petillant`/`-liquoreux`) et `name` suffixé par la couleur (« Cheverny Rouge », « Cheverny Blanc », « Cheverny Rosé »). Ne jamais regrouper plusieurs couleurs sous un seul profil. (Quelques anciennes entrées mono-couleur d'AOC en réalité multicolores restent à migrer au fil de l'eau.)
 
 When the user selects a known appellation and enters a vintage in `BottleForm.vue`, the form computes `drinkFrom = vintage + minYears` and `drinkUntil = vintage + maxYears` and shows a suggestion banner with an "Appliquer" button. Auto-fill only triggers when both date fields are empty (new bottle flow); for existing bottles the banner shows but does not overwrite.
 
