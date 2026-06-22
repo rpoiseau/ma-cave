@@ -1,0 +1,21 @@
+name: Release Please
+
+# Gestion des releases : à chaque push sur main, release-please maintient une PR de
+# « release » qui calcule le prochain numéro de version et met à jour le CHANGELOG à
+# partir des commits conventionnels (feat:, fix:, …). Fusionner cette PR crée le tag
+# git + la GitHub Release. Le déploiement Pages reste géré séparément (deploy.yml).
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
